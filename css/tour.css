@@ -1,0 +1,89 @@
+/* HCS Hubs tour — the tour's own layer (bar, coach marks, explainer sheets, landing). The Hub screens themselves use the
+   real Hubs' stylesheets, copied unchanged into parent-hub.css / student-hub.css. Tokens come from those files, so light
+   and dark follow the phone's setting exactly like the real Hubs. */
+:root { --tour: #1d4ed8; --tour-ink: #fff; --tour-soft: #e8efff; --tour-soft-ink: #1e3a8a; --scrim: rgba(10, 10, 20, .58); }
+@media (prefers-color-scheme: dark) {
+  :root { --tour: #93b4ff; --tour-ink: #0b1430; --tour-soft: #1b2440; --tour-soft-ink: #c9d8ff; --scrim: rgba(0, 0, 0, .66); }
+}
+
+/* ---- the tour bar: always on screen (inside the sticky Hub header), back to the landing page ---- */
+.tourbar { background: #1d1d1f; color: #f2f2f5; font-size: .78rem; }
+.tourbar .tin { max-width: 60rem; margin: 0 auto; padding: 4px 16px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tourbar .tl { flex: 1; min-width: 9rem; font-weight: 600; }
+.tourbar .tl b { color: #F2B705; }
+.tourbar a, .tourbar button { color: #fff; font: inherit; font-weight: 700; text-decoration: underline; min-height: 36px; padding: 0 6px;
+  display: inline-flex; align-items: center; background: none; border: 0; cursor: pointer; }
+.tourbar a:focus-visible, .tourbar button:focus-visible { outline: 2px solid #F2B705; outline-offset: 1px; }
+
+/* ---- spotlight + coach card ---- */
+.t-spot { position: fixed; z-index: 60; border-radius: 12px; pointer-events: none; box-shadow: 0 0 0 3px var(--tour), 0 0 0 200vmax var(--scrim);
+  transition: top .25s ease, left .25s ease, width .25s ease, height .25s ease; }
+.t-spot.none { box-shadow: 0 0 0 200vmax var(--scrim); width: 0; height: 0; top: 50%; left: 50%; }
+.t-card { position: fixed; z-index: 61; left: 12px; right: 12px; max-width: 26rem; margin: 0 auto; background: var(--card); color: var(--dd);
+  border: 2px solid var(--tour); border-radius: 14px; padding: 14px 16px 12px; box-shadow: 0 12px 40px rgba(0, 0, 0, .35); }
+.t-card.at-bottom { bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+.t-card.at-top { top: calc(12px + env(safe-area-inset-top, 0px)); }
+.t-card .t-step { font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tour); }
+.t-card h3 { margin: 2px 0 6px; font-size: 1.05rem; }
+.t-card .t-body { font-size: .9rem; line-height: 1.42; max-height: 38vh; overflow-y: auto; }
+.t-card .t-body p { margin: 0 0 6px; }
+.t-card .t-body ul { margin: 0 0 6px; padding-left: 1.1rem; }
+.t-card .t-try { display: block; margin-top: 6px; padding: 6px 9px; border-radius: 8px; background: var(--tour-soft); color: var(--tour-soft-ink); font-size: .84rem; font-weight: 600; }
+.t-card .t-nav { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.t-card .t-nav .sp { flex: 1; }
+.t-btn { min-height: 44px; padding: 0 16px; border-radius: 10px; font: inherit; font-weight: 700; font-size: .92rem; cursor: pointer; border: 0;
+  background: var(--tour); color: var(--tour-ink); }
+.t-btn.alt { background: var(--up-bg); color: var(--up); }
+.t-btn:disabled { opacity: .45; cursor: default; }
+.t-skip { font: inherit; font-size: .82rem; color: var(--dt); background: none; border: 0; text-decoration: underline; min-height: 44px; cursor: pointer; padding: 0 4px; }
+.t-btn:focus-visible, .t-skip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .t-spot { transition: none; } }
+
+/* the "restart" pill after the tour ends (free exploring) */
+.t-again { position: fixed; z-index: 30; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .25); }
+@media (min-width: 760px) { .t-again { bottom: 18px; } }
+
+/* ---- explainer sheet (replaces every link that would leave the demo) ---- */
+.t-sheet-bg { position: fixed; inset: 0; z-index: 70; background: var(--scrim); display: flex; align-items: flex-end; justify-content: center; padding: 12px; }
+@media (min-width: 760px) { .t-sheet-bg { align-items: center; } }
+.t-sheet { background: var(--card); color: var(--dd); border-radius: 16px; max-width: 28rem; width: 100%; padding: 18px 18px 14px; border: 2px solid var(--tour);
+  margin-bottom: env(safe-area-inset-bottom, 0px); }
+.t-sheet h3 { margin: 0 0 8px; font-size: 1.1rem; color: var(--red); }
+@media (prefers-color-scheme: dark) { .t-sheet h3 { color: var(--gold); } }
+.t-sheet p { margin: 0 0 8px; font-size: .92rem; line-height: 1.42; }
+.t-sheet .t-nav { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.t-sheet .t-nav > * { flex: 1 1 auto; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+
+/* ---- tour-only notes inside a Hub screen (clearly NOT part of the real page) ---- */
+.t-note { border: 1.5px dashed var(--tour); background: var(--tour-soft); color: var(--tour-soft-ink); border-radius: 10px; padding: 8px 11px; font-size: .82rem; line-height: 1.38; }
+.t-note b { color: inherit; }
+.t-note .t-tag { display: inline-block; font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; background: var(--tour); color: var(--tour-ink);
+  border-radius: 999px; padding: 1px 7px; margin-right: 4px; vertical-align: 1px; }
+.panel .t-note { margin: 10px 0 4px; }
+.t-rec { display: inline-block; font-size: .62rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; background: var(--ok-bg); color: var(--ok);
+  border-radius: 999px; padding: 2px 8px; margin-left: 6px; }
+
+/* ---- landing page ---- */
+.land { max-width: 44rem; margin: 0 auto; padding: 18px 16px 40px; }
+.land h2 { font-size: 1.35rem; margin: 4px 0 6px; }
+.land .lead { color: var(--dt); margin: 0 0 16px; font-size: .98rem; }
+.pick { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 620px) { .pick { grid-template-columns: 1fr 1fr; } }
+.pick a { display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--card-border);
+  text-decoration: none; color: var(--dd); min-height: 44px; border-top: 5px solid var(--red); }
+.pick a:hover { border-color: var(--red); }
+.pick a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.pick .big { font-size: 1.25rem; font-weight: 800; color: var(--red); }
+@media (prefers-color-scheme: dark) { .pick .big { color: var(--gold); } .pick a { border-top-color: var(--gold); } }
+.pick .what { font-size: .9rem; color: var(--dt); }
+.pick .go { margin-top: 6px; font-weight: 700; font-size: .9rem; }
+.land .facts { margin: 22px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.land .facts li { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 10px 14px; font-size: .9rem; }
+.land .credit { margin-top: 22px; font-size: .86rem; color: var(--dt); text-align: center; }
+.foot .credit { display: block; width: 100%; text-align: center; margin-top: 6px; }
+
+/* The Hubs' profile card is `details.card.hdr`, so it also picks up the page header's `.hdr { position: sticky; top: 0 }` and
+   slides over the header when the page scrolls (a bug in the real Hubs too — reported, not fixed here). The tour keeps it
+   in the flow so the tour bar's "Switch / Start over" links stay visible. */
+details.card.hdr { position: static; padding-top: 0; z-index: auto; }

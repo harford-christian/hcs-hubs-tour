@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#8E1420">
+<title>Parent Hub tour · HCS Hubs</title>
+<meta name="description" content="A guided, interactive tour of the HCS Parent Hub with a made-up family. Nothing is sent anywhere.">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="stylesheet" href="css/parent-hub.css">
+<link rel="stylesheet" href="css/tour.css">
+</head>
+<body>
+<!-- Markup copied from apps/parent-portal/public/index.html (same ids + classes, so the real stylesheet applies);
+     the tour bar and dashed .t-note boxes are the tour's own additions. -->
+<div class="hdr">
+  <div class="hin">
+    <div class="hrow">
+      <img class="mark" src="assets/eagle.png" alt="" width="36" height="36" decoding="async">
+      <h1>HCS <b>Parent</b> Hub</h1>
+      <nav class="top" id="topnav" aria-label="Sections" hidden></nav>
+    </div>
+    <div class="who">
+      <span id="who">Every child's schoolwork, one sign-in.</span>
+      <button id="signout" class="link" type="button" hidden>Sign out</button>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+  <section id="state-signedout" class="panel">
+    <h2 id="signin-title">Sign in</h2>
+    <p class="sub">Use the email address the school has on file for you.</p>
+    <form id="f-signin" novalidate>
+      <label class="f" for="email">Email</label>
+      <input id="email" name="email" type="email" autocomplete="off" inputmode="email" value="parent@example.com">
+      <label class="f" for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="off" placeholder="Demo: any text, or leave blank">
+      <button class="btn wide" type="submit">Sign in</button>
+    </form>
+    <p class="links"><button class="link2" type="button" data-mode="signup">Create an account</button> · <button class="link2" type="button" data-mode="reset">Forgot password?</button></p>
+    <div class="or"><span>or</span></div>
+    <button id="google" class="btn wide alt" type="button">Sign in with Google <span class="t-rec">Recommended</span></button>
+    <button class="btn wide alt" type="button" data-mode="link" id="linkbtn">Email me a sign-in link</button>
+    <p class="muted small" id="access-note">Your access comes from the guardian email in FACTS. Nothing is shown until the school's records
+      match the address you sign in with.</p>
+    <div class="t-note" id="signin-tip"><span class="t-tag">Tour</span> This is a copy of the real sign-in screen. Nothing you type here is sent anywhere —
+      please don't enter your real password. Any button signs you in to the made-up <b>Example</b> family.</div>
+  </section>
+
+  <section id="state-signup" class="panel" hidden>
+    <h2>Create an account</h2>
+    <p class="sub">Use the email address the school has on file. We'll send a link to confirm it's yours.</p>
+    <form id="f-signup" novalidate>
+      <label class="f" for="su-email">Email</label>
+      <input id="su-email" name="email" type="email" autocomplete="off" inputmode="email" value="parent@example.com">
+      <label class="f" for="su-password">Choose a password <span class="muted small">(at least 8 characters)</span></label>
+      <input id="su-password" name="password" type="password" autocomplete="off" placeholder="Demo: don't use a real password">
+      <button class="btn wide" type="submit">Create account</button>
+    </form>
+    <p class="links"><button class="link2" type="button" data-mode="signin">Back to sign in</button></p>
+  </section>
+
+  <section id="state-reset" class="panel" hidden>
+    <h2>Reset your password</h2>
+    <p class="sub">Enter your email and we'll send a reset link if an account exists for it.</p>
+    <form id="f-reset" novalidate>
+      <label class="f" for="rs-email">Email</label>
+      <input id="rs-email" name="email" type="email" autocomplete="off" inputmode="email" value="parent@example.com">
+      <button class="btn wide" type="submit">Send reset link</button>
+    </form>
+    <p class="muted" id="reset-msg" role="status" hidden></p>
+    <p class="links"><button class="link2" type="button" data-mode="signin">Back to sign in</button></p>
+  </section>
+
+  <section id="state-link" class="panel" hidden>
+    <h2>Email me a sign-in link</h2>
+    <p class="sub">No password needed — tap the link in the email on this device to sign in.</p>
+    <form id="f-link" novalidate>
+      <label class="f" for="lk-email">Email</label>
+      <input id="lk-email" name="email" type="email" autocomplete="off" inputmode="email" value="parent@example.com">
+      <button class="btn wide" type="submit">Send the link</button>
+    </form>
+    <p class="muted" id="link-msg" role="status" hidden></p>
+    <button id="link-open" class="btn wide" type="button" hidden>Pretend I tapped the link in the email</button>
+    <p class="links"><button class="link2" type="button" data-mode="signin">Back to sign in</button></p>
+  </section>
+
+  <section id="state-verify" class="panel" hidden>
+    <h2>Check your inbox</h2>
+    <p>We sent a confirmation link to <b id="verify-email"></b>. Open it, then come back here.</p>
+    <button id="verify-continue" class="btn wide" type="button">I've confirmed my email</button>
+    <p class="links"><button class="link2" type="button" data-mode="signin">Use a different email</button></p>
+    <p class="muted small">Nothing is loaded until the address is confirmed. Check spam if it hasn't arrived in a minute.</p>
+    <div class="t-note"><span class="t-tag">Tour</span> In the real Hub you'd open the email first. Here, just tap the button.</div>
+  </section>
+
+  <div id="state-ready" hidden>
+    <div class="chips kids" id="kids" aria-label="Children"></div>
+    <div class="view" id="view"></div>
+  </div>
+
+  <footer class="foot">
+    <span id="freshness"></span>
+    <span class="credit">A demo with a made-up family — no real student, parent or staff information.
+      <a href="index.html">Back to the start</a></span>
+  </footer>
+</main>
+
+<nav class="tabs" id="tabs" role="tablist" aria-label="Sections" hidden></nav>
+<script type="module" src="js/parent.js"></script>
+</body>
+</html>

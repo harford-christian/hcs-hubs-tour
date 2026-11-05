@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#8E1420">
+<title>Student Hub tour · HCS Hubs</title>
+<meta name="description" content="A guided, interactive tour of the HCS Student Hub with a made-up student. Nothing is sent anywhere.">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="stylesheet" href="css/student-hub.css">
+<link rel="stylesheet" href="css/tour.css">
+</head>
+<body>
+<!-- Markup copied from apps/portal/public/index.html (same ids + classes, so the real stylesheet applies);
+     the tour bar and dashed .t-note boxes are the tour's own additions. -->
+<div class="hdr">
+  <div class="hin">
+    <div class="hrow">
+      <img class="mark" src="assets/eagle.png" alt="" width="36" height="36" decoding="async">
+      <h1>HCS <b>Student</b> Hub</h1>
+      <nav class="top" id="topnav" aria-label="Sections" hidden></nav>
+    </div>
+    <div class="who">
+      <span id="who"></span>
+      <button id="signout" class="link" type="button" hidden>Sign out</button>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+  <section id="state-signedout" class="panel">
+    <h2>Sign in</h2>
+    <p>Use your <b>@harfordchristian.org</b> school Google account.</p>
+    <button id="signin" class="btn wide" type="button">Sign in with Google</button>
+    <p class="muted small" id="phone-note">Phones sometimes open links with a personal Google account. Pick your school account in the
+      Google window and you'll come straight back here.</p>
+    <div class="t-note"><span class="t-tag">Tour</span> This is a copy of the real sign-in screen. The button signs you in to a made-up
+      student, <b>Rowan Example</b> (grade 10). Nothing is sent anywhere.</div>
+  </section>
+
+  <div id="state-ready" hidden>
+    <div class="view" id="view"></div>
+  </div>
+
+  <footer class="foot">
+    <span id="freshness"></span>
+    <span class="credit">Thanks to <b>Noah May</b>, an HCS student, who helped design and build the Student Hub prototype.<br>
+      A demo with a made-up student — no real student or staff information. <a href="index.html">Back to the start</a></span>
+  </footer>
+</main>
+
+<nav class="tabs" id="tabs" role="tablist" aria-label="Sections" hidden></nav>
+<script type="module" src="js/student.js"></script>
+</body>
+</html>
