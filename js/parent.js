@@ -598,6 +598,8 @@ document.addEventListener("click", (e) => {
 });
 $("#f-signin").addEventListener("submit", (e) => { e.preventDefault(); signIn(); });
 $("#google").addEventListener("click", () => signIn());
+$("#yahoo")?.addEventListener("click", () => signIn());
+$("#microsoft")?.addEventListener("click", () => signIn());
 $("#f-signup").addEventListener("submit", (e) => { e.preventDefault(); $("#verify-email").textContent = $("#su-email").value || D.PARENT.email; show("verify"); });
 $("#verify-continue").addEventListener("click", () => signIn());
 $("#f-reset").addEventListener("submit", (e) => { e.preventDefault(); const m = $("#reset-msg"); m.hidden = false; m.textContent = `If an account exists for ${$("#rs-email").value}, a reset link is on its way. (Demo: nothing was sent.)`; });
