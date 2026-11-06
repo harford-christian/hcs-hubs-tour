@@ -626,12 +626,12 @@ function signIn() {
 
 /* ───────────── the two guided tours ───────────── */
 const signinSteps = [
-  { sel: "#state-signedout", title: "Welcome to the Parent Hub", html: "<p>This is the real sign-in screen. Sign in with <b>the email address FACTS has for you</b>.</p><p>You have three ways to sign in. The next steps show each one.</p>" },
-  { sel: "#google", title: "Recommended: Sign in with Google", html: "<p>Fastest, and nothing to remember: no new password, no email to wait for. Pick the Google account that uses your FACTS email.</p>" },
+  { sel: "#state-signedout", title: "Welcome to the Parent Hub", html: "<p>This is the real sign-in screen. Whichever way you choose, sign in with <b>the email address FACTS has for you</b>.</p><p>The next steps walk through each option.</p>" },
+  { sel: "#google", title: "Sign in with Google, Yahoo or Microsoft", html: "<p>Fastest, and nothing new to remember: no password to set, no email to wait for. Tap the one that matches your FACTS email — a Gmail, a Yahoo, or a Microsoft/Outlook address — and sign in with the account you already have.</p>" },
   { sel: "#linkbtn", title: "Or: email me a sign-in link", html: "<p>No password. Type your email and the Hub sends you a <b>sign-in link</b>. Open it on the same phone or computer and you're in.</p>" },
   { sel: '#state-signedout [data-mode="signup"]', title: "Or: create an account", html: "<p>Set up your own password with your FACTS email. The Hub first emails you a link to <b>confirm the address is yours</b>, and nothing loads until you confirm.</p>" },
   { sel: "#access-note", title: "Who can sign in", html: "<p>Only adults with <b>Family Portal access in FACTS</b> can sign in. Your children appear automatically when the email you sign in with matches the school's records.</p><p>If the Hub says there's no Family Portal access, or no students linked, <b>contact the office</b>.</p>" },
-  { sel: "#google", title: "Try it", html: "<p>In this demo, every button signs you in to a made-up family, the <b>Examples</b>, with two children: Wren (grade 4) and Rowan (grade 10).</p>", nextLabel: "Sign in with Google", action: signIn },
+  { sel: "#google", title: "Try it", html: "<p>In this demo, every button signs you in to a made-up family, the <b>Examples</b>, with two children: Wren (grade 4) and Rowan (grade 10).</p>", nextLabel: "Sign in", action: signIn },
 ];
 const appSteps = [
   { sel: "", title: "You're in: the Example family", html: `<p>This is the Parent Hub with made-up data. The tour points out each part of the page.</p><p class="t-try">You can tap anything as you go, and keep exploring after the last step.</p>${D.SHIFTED ? '<p class="muted small">It\'s the weekend, so the tour shows Monday as "today".</p>' : ""}`,
