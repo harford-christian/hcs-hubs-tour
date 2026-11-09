@@ -3,7 +3,7 @@
  * markup + classes so the real stylesheet renders them, with the invented student in demo-data.js (Rowan Example). No
  * Firebase, no network. Things the Student Hub does NOT have (calendar, lunch, absence reporting) are named as Parent-only.
  */
-import { $, esc, tourBar, startTour, endTour, tourRunning, againButton, explain } from "./tour.js";
+import { $, esc, tourBar, startTour, endTour, tourRunning, againButton, explain, STUDENT_HUB } from "./tour.js";
 import * as D from "./demo-data.js";
 import { renderAthletics, gameDayStyles } from "../vendor/gameday.js";
 
@@ -227,7 +227,7 @@ const appSteps = [
   { sel: "#hwchips, #view .grouplabel.warn, #view .grouplabel.warn + .card", all: true, title: "Everything that's due", html: "<p>Missing work is at the top, then everything due by day. Tap a class to filter.</p>", before: () => { S.hwFilter = "all"; showTab("homework"); window.scrollTo(0, 0); } },
   { sel: "#view :has(+ #tpop), #tpop", all: true, title: "Read it, or ask about it", html: "<p>Tap any line for your teacher's full note, or to <b>email your teacher</b> about it.</p>",
     before: () => { showTab("homework"); openPop([...document.querySelectorAll("#view button.item[data-pop]")].find((b) => JSON.parse(b.dataset.pop).x)); } },
-  { sel: "#attstat", title: "Attendance", html: "<p><b>Attendance</b> shows this quarter's absences and tardies. That's the tour. Explore on your own!</p>", before: () => { showTab("attendance"); window.scrollTo(0, 0); } },
+  { sel: "#attstat", title: "Attendance", html: `<p><b>Attendance</b> shows this quarter's absences and tardies. That's the tour!</p><p><a class="t-btn t-real" href="${STUDENT_HUB}">Open my Student Hub</a></p><p class="muted small">Or keep exploring this demo.</p>`, before: () => { showTab("attendance"); window.scrollTo(0, 0); } },
 ];
 function appTour() { startTour(appSteps, { onEnd: () => againButton(appTour) }); }
 

@@ -48,6 +48,12 @@
 button.row[data-pop] { width: 100%; text-align: left; border-left: 0; border-right: 0; border-bottom: 0; cursor: pointer; }
 button.item[data-pop] { width: 100%; text-align: left; cursor: pointer; }
 
+/* links into the REAL Student Hub (student tour only) */
+.tourbar a.real { color: #F2B705; }
+.t-card .t-body a.t-real { display: inline-flex; align-items: center; justify-content: center; width: 100%; text-decoration: none; margin: 4px 0 2px;
+  background: var(--btn-bg); color: var(--btn-fg); }
+.t-card .t-body a.t-real:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
 /* intro: ONLY a slowly pulsing "Step 1 of N" at the bottom; a click starts step 1 (startTour(..., { intro: true })) */
 .t-card.t-intro { background: none; border: 0; box-shadow: none; padding: 0; display: flex; justify-content: center; }
 .t-pulse { min-height: 52px; padding: 0 26px; border-radius: 999px; border: 0; cursor: pointer; font: inherit; font-weight: 800; font-size: 1.05rem;

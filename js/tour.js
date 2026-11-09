@@ -16,11 +16,15 @@ export const $ = (s, r = document) => r.querySelector(s);
 export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 /** The strip at the top of the sticky header — so "back to the start" is on every screen. */
+/** The real Student Hub (the student tour's bar + last step link here, same tab — students are already signed in at school). */
+export const STUDENT_HUB = "https://student-hub.harfordchristian.org/";
+
 export function tourBar(role) {
   const other = role === "parent" ? { href: "student.html", label: "Switch to Student" } : { href: "parent.html", label: "Switch to Parent" };
   const bar = document.createElement("div");
   bar.className = "tourbar";
   bar.innerHTML = `<div class="tin"><span class="tl"><b>Demo tour</b> · made-up family, nothing is sent</span>` +
+    (role === "student" ? `<a class="real" href="${STUDENT_HUB}">Open my Student Hub</a>` : "") +
     `<a href="${other.href}">${other.label}</a><a href="index.html">Start over</a></div>`;
   const hdr = $(".hdr");
   hdr.insertBefore(bar, hdr.firstChild);
