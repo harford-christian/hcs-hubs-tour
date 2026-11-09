@@ -13,7 +13,8 @@
   HCS Student Hub — student launch page (temporary homepage on students' school Chrome profiles).
   ONE static file, NO script, NO network requests: the real Student Hub stylesheet (via the tour's css/student-hub.css) and
   the game-day card styles are inlined unchanged so the sample cards look like the real Hub. Sample cards use the tour's
-  made-up student. Every button is a plain link to the Student Hub: student-hub.harfordchristian.org (search "HUB-LINK").
+  made-up student. "Try it out" opens the tour (../student.html, search "TOUR-LINK"); the skip link and the bottom button
+  go to the real Student Hub: student-hub.harfordchristian.org (search "HUB-LINK").
 -->
 <style>
 /* HCS Student Portal (B2) — Varsity family (HCS red + gold) on a CALM neutral page, carried over from the GAS
@@ -278,7 +279,11 @@ body { background: var(--page); }
 .hero h1 { font-size: clamp(2rem, 6vw, 3.2rem); line-height: 1.08; margin: 0 0 12px; font-weight: 800; white-space: normal; color: #fff; }
 .hero h1 b { color: var(--gold); }
 .lead { font-size: clamp(1.02rem, 2.4vw, 1.25rem); margin: 0 auto 26px; max-width: 34rem; color: #fbe9eb; }
-.signed { font-size: .9rem; color: var(--who); margin: 14px 0 0; }
+.signed { font-size: .9rem; color: var(--who); margin: 10px 0 0; }
+.skip { margin: 16px 0 0; }
+.skip a { color: #fff; font-weight: 700; font-size: 1.02rem; text-decoration: underline; text-underline-offset: 3px; display: inline-flex;
+  align-items: center; min-height: 44px; padding: 0 8px; }
+.skip a:focus-visible { outline: 3px solid #fff; outline-offset: 2px; border-radius: 6px; }
 
 /* highlights: real Hub cards with sample data */
 .hl { max-width: 60rem; margin: 0 auto; padding: 26px 16px 8px; }
@@ -319,8 +324,9 @@ body { background: var(--page); }
     <span class="new">New</span>
     <h1 id="h">The HCS <b>Student</b> Hub is here</h1>
     <p class="lead">Your schedule, grades, homework and attendance, all in one place.</p>
-    <!-- HUB-LINK --><a class="cta" href="https://student-hub.harfordchristian.org/">Click here to try it out!
+    <!-- TOUR-LINK: the interactive Student Hub tour on this same site --><a class="cta" href="../student.html">Click here to try it out!
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <p class="skip"><!-- HUB-LINK --><a href="https://student-hub.harfordchristian.org/">Skip the tour — open my Student Hub</a></p>
     <p class="signed">You're already signed in with your school account.</p>
   </div>
 </section>
