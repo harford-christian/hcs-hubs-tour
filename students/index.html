@@ -299,6 +299,15 @@ body { background: var(--page); }
 .end .cta:focus-visible { outline-color: var(--focus); }
 .stat .sb { min-height: 60px; border-radius: 10px; background: var(--card); border: 1px solid var(--card-border); color: var(--dt); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: .8rem; }
 .stat .sb b { font-size: 1.1rem; color: var(--dd); }
+/* static picture of the real Hub's tap-to-open assignment popup ("Email <teacher> about this") */
+:root { --tour: #1d4ed8; }
+@media (prefers-color-scheme: dark) { :root { --tour: #93b4ff; } }
+.tapped { box-shadow: inset 4px 0 0 var(--tour); background: color-mix(in srgb, var(--seg) 70%, transparent); }
+.popdemo { margin-top: 8px; background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 12px 14px 14px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .14); }
+.popdemo .tap { font-size: .7rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--dt); margin-bottom: 4px; }
+.popdemo .pop-t { font-size: 1rem; font-weight: 700; line-height: 1.25; }
+.popdemo .btn { display: flex; align-items: center; justify-content: center; cursor: default; }
 .fine { text-align: center; font-size: .78rem; color: var(--dt); padding: 0 16px 24px; margin: 0; }
 </style>
 </head>
@@ -328,13 +337,15 @@ body { background: var(--page); }
     </div>
     <div class="feat">
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Homework<span class="sample-tag">Sample</span></h3>
-      <p>What's due today and tomorrow, plus anything a teacher marked missing.</p>
-      <div class="card"><div class="daybar"><span><b>Due today</b></span></div><div class="item soon"><span class="kchip" style="--c:#0e7490">Bio</span><div class="txt"><div class="ttl">Cell diagram</div><div class="meta"><span>Biology</span></div></div></div><div class="daybar"><span><b>Due tomorrow</b></span></div><div class="item soon"><span class="kchip" style="--c:#b45309">Hist</span><div class="txt"><div class="ttl">Chapter 8 questions</div><div class="meta"><span>World History</span></div></div></div><div class="item go late"><span class="kchip" style="--c:#15803d">Geom</span><div class="txt"><div class="ttl">Proofs worksheet 4.2</div><div class="meta"><span class="due">Was due Thursday</span><span class="pill miss">Missing</span></div></div><span class="pts">20 pts</span></div></div>
+      <p>What's due today and tomorrow, plus anything a teacher marked missing. Tap a line to email your teacher about it.</p>
+      <div class="card"><div class="daybar"><span><b>Due today</b></span></div><div class="item soon"><span class="kchip" style="--c:#0e7490">Bio</span><div class="txt"><div class="ttl">Cell diagram</div><div class="meta"><span>Biology</span></div></div></div><div class="daybar"><span><b>Due tomorrow</b></span></div><div class="item soon tapped"><span class="kchip" style="--c:#b45309">Hist</span><div class="txt"><div class="ttl">Chapter 8 questions</div><div class="meta"><span>World History</span></div></div></div><div class="item go late"><span class="kchip" style="--c:#15803d">Geom</span><div class="txt"><div class="ttl">Proofs worksheet 4.2</div><div class="meta"><span class="due">Was due Thursday</span><span class="pill miss">Missing</span></div></div><span class="pts">20 pts</span></div></div>
+      <div class="popdemo"><div class="tap">Tap it and you get:</div><div class="pop-t">Chapter 8 questions</div><div class="meta"><span class="due">Due tomorrow</span><span>· World History</span></div><span class="btn wide">✉ Email Mrs. Prototype about this</span></div>
     </div>
     <div class="feat">
       <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg>Grades<span class="sample-tag">Sample</span></h3>
-      <p>Your current average in every class. Tap a class to see each assignment.</p>
-      <div class="card"><div class="gcard"><div class="rail" style="background:#2563eb"></div><div class="gname"><div class="n">English 10</div><div class="m">Mrs. Demo</div></div><div class="avg"><span class="q">Q2</span><span class="num">88.4</span><span class="letter">B+</span></div></div></div>
+      <p>Your current average in every class. Tap a class to see each assignment, then tap an assignment to email your teacher about it.</p>
+      <div class="card open"><div class="gcard"><div class="rail" style="background:#2563eb"></div><div class="gname"><div class="n">English 10</div><div class="m">Mrs. Demo</div></div><div class="avg"><span class="q">Q2</span><span class="num">88.4</span><span class="letter">B+</span></div></div><div class="row tapped"><div class="txt"><div class="ttl">Vocabulary quiz 6</div><div class="meta"><span class="due">Due last week</span></div></div><div class="score">18/20</div></div><div class="row"><div class="txt"><div class="ttl">Reading log</div><div class="meta"><span class="due">Due tomorrow</span></div></div><div class="score word">/ 10</div><span class="pill up">Upcoming</span></div></div>
+      <div class="popdemo"><div class="tap">Tap it and you get:</div><div class="pop-t">Vocabulary quiz 6</div><div class="meta"><span class="due">Was due last week</span><span>· English 10</span></div><span class="btn wide">✉ Email Mrs. Demo about this</span></div>
       <div class="card"><div class="gcard"><div class="rail" style="background:#0e7490"></div><div class="gname"><div class="n">Biology</div><div class="m">Ms. Specimen</div></div><div class="avg"><span class="q">Q2</span><span class="num">92.7</span><span class="letter">A-</span></div></div></div>
     </div>
     <div class="feat">
