@@ -2,7 +2,9 @@
  * HCS Hubs tour — the coach-mark engine + the tour bar + explainer sheets. No network, no storage beyond this tab.
  *
  *   tourBar(role)                       the always-visible "Demo tour · switch / start over" strip inside the Hub header
- *   startTour(steps, { onEnd })         step = { sel, title, html, before?(), nextLabel?, action?() } — sel is a CSS selector (re-resolved on every
+ *   startTour(steps, { onEnd, intro })  intro: true = open with ONLY a slowly pulsing "Step 1 of N" at the bottom (page dimmed,
+ *                                       nothing spotlit); clicking it (or Enter / →) starts step 1.
+ *                                       step = { sel, title, html, before?(), nextLabel?, action?() } — sel is a CSS selector (re-resolved on every
  *                                       repaint, because the Hub screens repaint their view on every tap) or "" for a
  *                                       centred card with no spotlight
  *   explain({ title, html, link })      a bottom sheet used wherever the real Hub would leave the page (FACTS, Talon Hub, forms)
@@ -25,14 +27,14 @@ export function tourBar(role) {
 
 let T = null;   // the running tour
 
-export function startTour(steps, { onEnd } = {}) {
+export function startTour(steps, { onEnd, intro = false } = {}) {
   endTour(true);
   const spot = document.createElement("div"); spot.className = "t-spot"; spot.setAttribute("aria-hidden", "true");
   const card = document.createElement("div"); card.className = "t-card at-bottom"; card.setAttribute("role", "dialog");
   card.setAttribute("aria-modal", "false"); card.setAttribute("aria-labelledby", "t-title");
   document.body.append(spot, card);
   const again = document.querySelector(".t-again"); if (again) again.remove();
-  T = { steps, i: 0, spot, card, onEnd, raf: 0 };
+  T = { steps, i: 0, spot, card, onEnd, raf: 0, intro };
   const follow = () => { if (T) { cancelAnimationFrame(T.raf); T.raf = requestAnimationFrame(place); } };
   T.mo = new MutationObserver(follow);
   T.mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["open", "hidden", "class"] });
@@ -54,17 +56,22 @@ function onKey(e) {
 function onCardClick(e) {
   const b = e.target.closest("[data-t]");
   if (!b || !T) return;
-  if (b.dataset.t === "next") next();
+  if (b.dataset.t === "begin") begin();
+  else if (b.dataset.t === "next") next();
   else if (b.dataset.t === "back") go(T.i - 1);
   else if (b.dataset.t === "skip") endTour();
 }
 
 /** Next — or, for a step with `action` (e.g. "Sign me in"), end this tour and run it. */
 function next() {
+  if (T && T.intro) { begin(); return; }
   const s = T && T.steps[T.i];
   if (s && s.action) { endTour(true); s.action(); return; }
   go(T.i + 1);
 }
+
+/** Leave the pulsing intro and show step 1 with its spotlight. */
+function begin() { if (!T) return; T.intro = false; go(0); }
 
 function target() {
   const s = T && T.steps[T.i];
@@ -83,6 +90,13 @@ async function go(i) {
   if (s.before) { try { await s.before(); } catch (err) { console.warn("tour step", err); } }
   await new Promise((r) => setTimeout(r, 30));   // let the Hub view repaint first
   if (!T) return;
+  if (T.intro) {   // only the pulsing step label, nothing else highlighted
+    T.card.innerHTML = `<button type="button" class="t-pulse" data-t="begin" aria-label="Step 1 of ${T.steps.length}: start the tour">Step 1 of ${T.steps.length}</button>`;
+    window.scrollTo({ top: 0 });
+    place();
+    T.card.querySelector(".t-pulse").focus({ preventScroll: true });
+    return;
+  }
   const last = i === T.steps.length - 1;
   T.card.innerHTML = `<div class="t-step">Step ${i + 1} of ${T.steps.length}</div><h3 id="t-title" tabindex="-1">${esc(s.title)}</h3>` +
     `<div class="t-body" aria-live="polite">${s.html}</div><div class="t-nav"><button type="button" class="t-skip" data-t="skip">${last ? "Close" : "Skip tour"}</button><span class="sp"></span>` +
@@ -103,6 +117,7 @@ function place() {
   const el = target();
   // set a class only when it changes: the observer above watches class attributes, so an identical write would loop
   const cls = (n, v) => { if (n.className !== v) n.className = v; };
+  if (T.intro) { cls(T.spot, "t-spot none"); cls(T.card, "t-card t-intro at-bottom"); return; }
   if (!el) { cls(T.spot, "t-spot none"); cls(T.card, "t-card at-bottom"); return; }
   const r = el.getBoundingClientRect(), pad = 4;
   cls(T.spot, "t-spot");

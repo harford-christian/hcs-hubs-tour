@@ -213,4 +213,4 @@ function appTour() { startTour(appSteps, { onEnd: () => againButton(appTour) });
 
 tourBar("student");
 show("signedout");
-setTimeout(() => startTour(signinSteps), 300);
+setTimeout(() => startTour(signinSteps, { intro: true }), 300);
