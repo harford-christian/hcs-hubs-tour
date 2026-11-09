@@ -16,11 +16,18 @@ const ICON = {
   today: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>',
   grades: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg>',
   homework: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+  more: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
+  whistle: '<svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="14" r="5"/><path d="M12.5 10.5L21 6V4h-8l-3.5 5"/><path d="M9 14h.01"/></svg>',
+  check: '<svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  people: '<svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 16 0v1"/></svg>',
+  moon: '<svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+  swap: '<svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3l4 4-4 4M20 7H8M8 21l-4-4 4-4M4 17h12"/></svg>',
+  info: '<svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
   attendance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
   chev: '<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
 };
-const TABS = [{ id: "today", label: "Today" }, { id: "grades", label: "Grades" }, { id: "homework", label: "Homework" }, { id: "attendance", label: "Attendance" }];
-const S = { tab: "today", hdrOpen: false, openClass: null, hwFilter: "all" };
+const TABS = [{ id: "today", label: "Today" }, { id: "grades", label: "Grades" }, { id: "homework", label: "Homework" }, { id: "attendance", label: "Attendance" }, { id: "more", label: "More" }];
+const S = { tab: "today", hdrOpen: false, openClass: null, hwFilter: "all", moreOpen: { games: false, classes: false } };
 
 const cls = (cid) => CLASSES.find((c) => c.id === cid) || { name: "Class", short: "?", color: "#6b7280" };
 const kchip = (cid) => { const c = cls(cid); return `<span class="kchip" style="--c:${esc(c.color)}">${esc(c.short)}</span>`; };
@@ -39,7 +46,7 @@ function renderTabs() {
   $("#topnav").innerHTML = TABS.map((t) => `<button type="button" class="${S.tab === t.id ? "on" : ""}" data-tab="${t.id}">${t.label}</button>`).join("");
 }
 function showTab(id) { S.tab = id; renderTabs(); if (!tourRunning()) window.scrollTo(0, 0); render(); }
-const RENDER = { today: renderToday, grades: renderGrades, homework: renderHomework, attendance: renderAttendance };
+const RENDER = { today: renderToday, grades: renderGrades, homework: renderHomework, attendance: renderAttendance, more: renderMore };
 function render() { RENDER[S.tab](); }
 
 /* ───────────── homework (gradebook + lesson plans) ───────────── */
@@ -150,6 +157,43 @@ function renderAttendance() {
   $("#view").innerHTML = html;
 }
 
+/* ───────────── MORE (copy of the live Hub's More tab, PR #65: Sports · From FACTS · Settings) ───────────── */
+const moreRow = ({ key, icon, title, meta, open, tab, extra = "", cls = "" }) => {
+  const attrs = tab ? ` data-tab="${tab}"` : key ? ` data-more="${key}"${key === "switch" ? "" : ` aria-expanded="${!!open}"`}` : "";
+  const tag = tab || key ? "button" : "div";
+  return `<${tag}${tag === "button" ? ' type="button"' : ""} class="more-row${cls ? ` ${cls}` : ""}"${attrs}>${icon}<span class="txt"><span class="ttl">${esc(title)}</span>` +
+    `${meta ? `<span class="meta">${esc(meta)}</span>` : ""}</span>${extra}${tag === "button" ? ICON.chev : ""}</${tag}>`;
+};
+const themeNow = () => document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+function renderMore() {
+  const o = S.moreOpen, games = D.GAMES[ME.id], teams = D.TEAMS[ME.id];
+  const soon = games.filter((g) => g.date >= TODAY).length;
+  let html = '<div class="grouplabel"><span>Sports</span></div>' +
+    `<div class="card">${moreRow({ key: "games", icon: ICON.whistle, title: "My games", meta: [teams.map((t) => t.name).join(" · "), `${soon} coming up`].join(" · "), open: o.games })}</div>`;
+  if (o.games) {
+    gameDayStyles();
+    const list = CLASSES.filter((c) => c.pattern).map((c) => ({ id: c.id, name: c.name, pattern: c.pattern, period: `Period ${c.pattern}` }));
+    html += `<div class="more-sub">${renderAthletics({ teams, events: games, classes: list, periodTimes: D.PERIOD_TIMES, today: TODAY }).replace(/^<div class="grouplabel">[\s\S]*?<\/div>/, "")}</div>`;
+  }
+  const att = D.ATTENDANCE[ME.id].length;
+  html += '<div class="grouplabel"><span>From FACTS</span></div><div class="card">' +
+    moreRow({ tab: "attendance", icon: ICON.check, title: "Attendance", meta: `Q${D.QUARTER.q}: ${att ? `${att} day${att === 1 ? "" : "s"} on record` : "nothing on record"}` }) +
+    moreRow({ key: "classes", icon: ICON.people, title: "Classes & teachers", open: o.classes, meta: `${CLASSES.length} classes` }) + "</div>";
+  if (o.classes) html += `<div class="card more-sub" id="more-classes">${CLASSES.map((c) => {
+    const meta = [c.staffName, c.pattern ? `Period ${c.pattern}` : "", /^\d/.test(c.room) ? `Room ${c.room}` : c.room].filter(Boolean).join(" · ");
+    return `<div class="cls-item"><span class="dot" style="background:${esc(c.color)}"></span><div class="txt"><div class="ttl">${esc(c.name)}</div><div class="meta">${esc(meta)}</div></div>` +
+      `<button type="button" class="chip plain" data-mailx="${esc(c.staffName)}" aria-label="Email your ${esc(c.name)} teacher">Email</button></div>`;
+  }).join("")}</div>`;
+  const pref = document.documentElement.dataset.theme || "phone", now = themeNow();
+  const seg = `<span class="seg3" role="group" aria-label="Theme">${[["phone", "Phone"], ["light", "Light"], ["dark", "Dark"]].map(([k, l]) =>
+    `<button type="button" class="chip plain${pref === k ? " on" : ""}" data-theme-set="${k}" aria-pressed="${pref === k}">${l}</button>`).join("")}</span>`;
+  html += '<div class="grouplabel"><span>Settings</span></div><div class="card" id="more-settings">' +
+    moreRow({ cls: "theme", icon: ICON.moon, title: "Theme", meta: pref === "phone" ? `Follows your phone automatically · now ${now}` : `${now === "dark" ? "Dark" : "Light"} on this device`, extra: seg }) +
+    moreRow({ key: "switch", icon: ICON.swap, title: "Switch account", meta: ME.email }) +
+    moreRow({ icon: ICON.info, title: "About", meta: `Data from FACTS · as of ${freshness()}` }) + "</div>";
+  $("#view").innerHTML = html;
+}
+
 /* ───────────── assignment popup (same as the real Hub: tap a line → "Email <teacher> about this") ───────────── */
 const popAttr = (p) => ` data-pop="${esc(JSON.stringify(p))}"`;
 function openPop(el) {
@@ -172,9 +216,16 @@ document.addEventListener("click", (e) => {
       link: { href: TALON_DEMO, label: "Open the Talon Hub demo ↗" } });
     return;
   }
+  const th = t.closest("[data-theme-set]");
+  if (th) { const k = th.dataset.themeSet; if (k === "phone") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = k; render(); return; }
+  const mo = t.closest("[data-more]");
+  if (mo) {
+    if (mo.dataset.more === "switch") { explain({ title: "Switch account", html: "<p>Signs you out so you can choose a different Google account, like your <b>school</b> one.</p><p>In this demo it does nothing.</p>" }); return; }
+    S.moreOpen[mo.dataset.more] = !S.moreOpen[mo.dataset.more]; render(); return;
+  }
   const mx = t.closest("[data-mailx]");
   if (mx) {
-    explain({ title: "Email your teacher", html: `<p>In your real Student Hub this opens a new email to <b>${esc(mx.dataset.mailx)}</b> with the assignment already in the subject line. Just type your question.</p><p>Nothing is sent in this demo.</p>` });
+    explain({ title: "Email your teacher", html: `<p>In your real Student Hub this opens a new email to <b>${esc(mx.dataset.mailx)}</b>, already addressed, with the subject filled in. Just type your question.</p><p>Nothing is sent in this demo.</p>` });
     return;
   }
   if (t.closest("[data-popclose]")) { const pp = $("#tpop"); if (pp) pp.remove(); return; }
@@ -227,7 +278,9 @@ const appSteps = [
   { sel: "#hwchips, #view .grouplabel.warn, #view .grouplabel.warn + .card", all: true, title: "Everything that's due", html: "<p>Missing work is at the top, then everything due by day. Tap a class to filter.</p>", before: () => { S.hwFilter = "all"; showTab("homework"); window.scrollTo(0, 0); } },
   { sel: "#view :has(+ #tpop), #tpop", all: true, title: "Read it, or ask about it", html: "<p>Tap any line for your teacher's full note, or to <b>email your teacher</b> about it.</p>",
     before: () => { showTab("homework"); openPop([...document.querySelectorAll("#view button.item[data-pop]")].find((b) => JSON.parse(b.dataset.pop).x)); } },
-  { sel: "#attstat", title: "Attendance", html: `<p><b>Attendance</b> shows this quarter's absences and tardies. That's the tour!</p><p><a class="t-btn t-real" href="${STUDENT_HUB}">Open my Student Hub</a></p><p class="muted small">Or keep exploring this demo.</p>`, before: () => { showTab("attendance"); window.scrollTo(0, 0); } },
+  { sel: "#attstat", title: "Attendance", html: "<p><b>Attendance</b> shows this quarter's absences and tardies.</p>", before: () => { showTab("attendance"); window.scrollTo(0, 0); } },
+  { sel: "#view .card", all: true, title: "More", html: `<p>Tap <b>More</b> for your games, every teacher and room with an <b>Email</b> button, and a <b>Light/Dark</b> theme. That's the tour!</p><p><a class="t-btn t-real" href="${STUDENT_HUB}">Open my Student Hub</a></p><p class="muted small">Or keep exploring this demo.</p>`,
+    before: () => { S.moreOpen = { games: false, classes: true }; showTab("more"); window.scrollTo(0, 0); } },
 ];
 function appTour() { startTour(appSteps, { onEnd: () => againButton(appTour) }); }
 

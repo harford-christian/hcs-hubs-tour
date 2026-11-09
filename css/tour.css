@@ -3,7 +3,7 @@
    and dark follow the phone's setting exactly like the real Hubs. */
 :root { --tour: #1d4ed8; --tour-ink: #fff; --tour-soft: #e8efff; --tour-soft-ink: #1e3a8a; --scrim: rgba(10, 10, 20, .58); }
 @media (prefers-color-scheme: dark) {
-  :root { --tour: #93b4ff; --tour-ink: #0b1430; --tour-soft: #1b2440; --tour-soft-ink: #c9d8ff; --scrim: rgba(0, 0, 0, .66); }
+  :root:not([data-theme="light"]) { --tour: #93b4ff; --tour-ink: #0b1430; --tour-soft: #1b2440; --tour-soft-ink: #c9d8ff; --scrim: rgba(0, 0, 0, .66); }
 }
 
 /* ---- the tour bar: always on screen (inside the sticky Hub header), back to the landing page ---- */
@@ -113,3 +113,6 @@ button.item[data-pop] { width: 100%; text-align: left; cursor: pointer; }
    slides over the header when the page scrolls (a bug in the real Hubs too — reported, not fixed here). The tour keeps it
    in the flow so the tour bar's "Switch / Start over" links stay visible. */
 details.card.hdr { position: static; padding-top: 0; z-index: auto; }
+
+/* More → Theme in the demo (data-theme on <html>, this visit only) */
+:root[data-theme="dark"] { --tour: #93b4ff; --tour-ink: #0b1430; --tour-soft: #1b2440; --tour-soft-ink: #c9d8ff; --scrim: rgba(0, 0, 0, .66); }

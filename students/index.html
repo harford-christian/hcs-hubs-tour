@@ -313,6 +313,29 @@ body { background: var(--page); }
 .popdemo .tap { font-size: .7rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--dt); margin-bottom: 4px; }
 .popdemo .pop-t { font-size: 1rem; font-weight: 700; line-height: 1.25; }
 .popdemo .btn { display: flex; align-items: center; justify-content: center; cursor: default; }
+/* More sample (styles copied from the live Hub's More tab, PR #65) */
+@media (min-width: 760px) { .feat.wide { grid-column: 1 / -1; } .grid2 { grid-template-columns: 1fr 1fr; } }
+.grid2 { display: grid; gap: 12px; grid-template-columns: 1fr; }
+.grid2 .card { margin: 0; }
+.more-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; min-height: 56px; border-top: 1px solid var(--line); color: var(--dd); }
+.card > .more-row:first-child { border-top: 0; }
+.more-row .mi { flex: none; width: 22px; height: 22px; color: var(--red); }
+@media (prefers-color-scheme: dark) { .more-row .mi { color: var(--gold); } }
+.more-row .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.more-row .ttl { font-weight: 700; font-size: .95rem; }
+.more-row .meta { color: var(--dt); font-size: .8rem; }
+.more-row .seg3 { display: flex; gap: 6px; flex: none; }
+.more-row .seg3 .chip { padding: 0 10px; }
+@media (max-width: 520px) { .more-row.theme { flex-wrap: wrap; } .more-row.theme .txt { flex-basis: calc(100% - 34px); } .more-row.theme .seg3 { margin-left: 34px; } }
+.cls-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 20px; border-top: 1px solid var(--line); min-height: 56px; }
+.card > .cls-item:first-child { border-top: 0; }
+.cls-item .txt { flex: 1; min-width: 0; }
+.cls-item .ttl { font-weight: 600; font-size: .9rem; }
+.cls-item .meta { color: var(--dt); font-size: .78rem; }
+.cls-item .chip { opacity: 1; }
+.cls-item .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.feat h3 svg[fill="currentColor"] { color: var(--red); }
+@media (prefers-color-scheme: dark) { .feat h3 svg[fill="currentColor"] { color: var(--gold); } }
 .fine { text-align: center; font-size: .78rem; color: var(--dt); padding: 0 16px 24px; margin: 0; }
 </style>
 </head>
@@ -359,6 +382,14 @@ body { background: var(--page); }
       <p>Absences and tardies this quarter. On a team? See dismissal, bus and game times.</p>
       <div class="stat"><span class="sb"><b>0</b>absent</span><span class="sb"><b>1</b>tardy</span><span class="sb"><b>0</b>other</span></div>
       <div class="card gd" style="margin-top:8px"><div class="gd-head"><span class="gd-when">Today</span><span class="gd-team">Varsity Basketball</span><span class="pill up">Away</span></div><div class="gd-grid"><div class="gd-cell"><div class="gd-k">Dismissal</div><div class="gd-v">2:15 PM</div></div><div class="gd-cell"><div class="gd-k">Bus leaves</div><div class="gd-v">2:30 PM</div></div><div class="gd-cell"><div class="gd-k">Game time</div><div class="gd-v">6:00 PM</div></div></div></div>
+    </div>
+    <div class="feat wide">
+      <h3><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>More<span class="sample-tag">Sample</span></h3>
+      <p>Your games, every teacher and room with an Email button, and a Light or Dark theme.</p>
+      <div class="grid2">
+        <div class="card"><div class="cls-item"><span class="dot" style="background:#7e22ce"></span><div class="txt"><div class="ttl">Bible 10</div><div class="meta">Mr. Mockup · Period 1 · Room 112</div></div><span class="chip plain">Email</span></div><div class="cls-item"><span class="dot" style="background:#2563eb"></span><div class="txt"><div class="ttl">English 10</div><div class="meta">Mrs. Demo · Period 2 · Room 208</div></div><span class="chip plain">Email</span></div></div>
+        <div class="card"><div class="more-row theme"><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span class="txt"><span class="ttl">Theme</span><span class="meta">Follows your phone, or pick one</span></span><span class="seg3"><span class="chip plain on">Phone</span><span class="chip plain">Light</span><span class="chip plain">Dark</span></span></div><div class="more-row"><svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="14" r="5"/><path d="M12.5 10.5L21 6V4h-8l-3.5 5"/><path d="M9 14h.01"/></svg><span class="txt"><span class="ttl">My games</span><span class="meta">Varsity Basketball · 2 coming up</span></span></div></div>
+      </div>
     </div>
 
   </div>

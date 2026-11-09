@@ -15,7 +15,8 @@
   --btn-bg: #F2B705; --btn-fg: #3a2a00; --chip-mix: 14%; --chip-text-mix: 100%; --focus: #8E1420;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    --accent: #F2B705;
     --page: #121216; --header: #5c0d15; --who: #e3c6ca;
     --card: #1b1b20; --card-border: #2a2a31; --line: #2a2a31; --dt: #9a9aa6; --dd: #ececf1; --label: #9a9aa6;
     --now-bg: #2a2410; --now-t: #f2d27a;
@@ -219,3 +220,37 @@ button.mrow { display: flex; align-items: center; justify-content: space-between
 button.item { background: none; border: 0; border-bottom: 1px solid var(--line); font: inherit; color: inherit; cursor: pointer; }
 details.card > summary .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 details.card > summary .txt .sub { white-space: normal; }
+
+/* ---- copied from the live Student Hub (2026-11-09, PR #65): More → Theme (Phone/Light/Dark) + the More tab ---- */
+:root { --accent: #8E1420; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #121216; --header: #5c0d15; --who: #e3c6ca;
+  --card: #1b1b20; --card-border: #2a2a31; --line: #2a2a31; --dt: #9a9aa6; --dd: #ececf1; --label: #9a9aa6;
+  --now-bg: #2a2410; --now-t: #f2d27a;
+  --bar: #17171b; --bar-line: #2a2a31; --bar-fg: #9a9aa6; --bar-on: #F2B705;
+  --overdue: #ff8a80; --overdue-bg: #33191c; --daybar: #202026; --daybar-fg: #ececf1; --daybar-b: #F2B705;
+  --miss: #ff8a80; --miss-bg: #33191c; --late: #f2d27a; --late-bg: #2a2410; --up: #c9c9d3; --up-bg: #26262d;
+  --seg: #202026; --ok-bg: #1d3a26; --ok: #b7efc5; --chip-mix: 24%; --chip-text-mix: 65%; --focus: #F2B705;
+  --accent: #F2B705;
+}
+:root[data-theme="light"] { color-scheme: light; }
+.more-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; min-height: 56px; border-top: 1px solid var(--line);
+  color: var(--dd); text-align: left; text-decoration: none; font: inherit; background: none; }
+.card > .more-row:first-child { border-top: 0; }
+.more-row .mi { flex: none; width: 22px; height: 22px; color: var(--accent); }
+.more-row .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.more-row .ttl { font-weight: 700; font-size: .95rem; }
+.more-row .meta { color: var(--dt); font-size: .8rem; overflow-wrap: anywhere; }
+button.more-row:hover, a.more-row:hover { background: color-mix(in srgb, var(--seg) 70%, transparent); }
+.more-row[aria-expanded="true"] .chev { transform: rotate(90deg); }
+.more-row .seg3 { display: flex; gap: 6px; flex: none; }
+.more-row .seg3 .chip { padding: 0 10px; }
+.cls-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 20px; border-top: 1px solid var(--line); min-height: 56px; }
+.cls-item .txt { flex: 1; min-width: 0; }
+.cls-item .ttl { font-weight: 600; font-size: .9rem; }
+.cls-item .meta { color: var(--dt); font-size: .78rem; }
+.cls-item .chip { text-decoration: none; opacity: 1; }
+.more-sub { margin-top: 12px; }
+.more-sub > .card { margin-top: 0; }
+@media (max-width: 520px) { .more-row.theme { flex-wrap: wrap; } .more-row.theme .txt { flex-basis: calc(100% - 34px); } .more-row.theme .seg3 { margin-left: 34px; } }
