@@ -4,6 +4,7 @@
  *   tourBar(role)                       the always-visible "Demo tour · switch / start over" strip inside the Hub header
  *   startTour(steps, { onEnd, intro })  intro: true = open with ONLY a slowly pulsing "Step 1 of N" at the bottom (page dimmed,
  *                                       nothing spotlit); clicking it (or Enter / →) starts step 1.
+ *                                       step.all = true: spotlight the box around every visible match of sel (not just the first)
  *                                       step = { sel, title, html, before?(), nextLabel?, action?() } — sel is a CSS selector (re-resolved on every
  *                                       repaint, because the Hub screens repaint their view on every tap) or "" for a
  *                                       centred card with no spotlight
@@ -119,7 +120,13 @@ function place() {
   const cls = (n, v) => { if (n.className !== v) n.className = v; };
   if (T.intro) { cls(T.spot, "t-spot none"); cls(T.card, "t-card t-intro at-bottom"); return; }
   if (!el) { cls(T.spot, "t-spot none"); cls(T.card, "t-card at-bottom"); return; }
-  const r = el.getBoundingClientRect(), pad = 4;
+  let r = el.getBoundingClientRect();
+  const pad = 4, s = T.steps[T.i];
+  if (s.all) {   // one box around every visible match
+    const rs = [...document.querySelectorAll(s.sel)].filter((n) => n.getClientRects().length).map((n) => n.getBoundingClientRect());
+    const top = Math.min(...rs.map((x) => x.top)), left = Math.min(...rs.map((x) => x.left)), bottom = Math.max(...rs.map((x) => x.bottom)), right = Math.max(...rs.map((x) => x.right));
+    r = { top, left, bottom, right, width: right - left, height: bottom - top };
+  }
   cls(T.spot, "t-spot");
   Object.assign(T.spot.style, { top: `${r.top - pad}px`, left: `${r.left - pad}px`, width: `${r.width + pad * 2}px`, height: `${r.height + pad * 2}px` });
   // the card sits in whichever half the target is not in

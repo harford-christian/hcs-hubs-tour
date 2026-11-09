@@ -115,7 +115,7 @@ function renderGrades() {
       const ungraded = a.status === "Valid" && a.receivedPoints === null;
       const tag = a.status !== "Valid" ? pill(a.status) : ungraded ? `<span class="pill up">${a.dateDue >= TODAY ? "Upcoming" : "Not graded"}</span>` : "";
       const score = PILL[a.status] ? "" : `<div class="score${ungraded ? " word" : ""}">${esc(ungraded ? `/ ${a.maxPoints}` : `${a.receivedPoints}/${a.maxPoints}`)}</div>`;
-      return `<div class="row"><div class="txt"><div class="ttl">${esc(a.title)}</div><div class="meta"><span class="due">Due ${esc(dayMd(a.dateDue))}</span></div></div>${score}${tag}</div>`;
+      return `<button type="button" class="row"${popAttr({ c: a.classId, t: a.title, d: a.dateDue })}><div class="txt"><div class="ttl">${esc(a.title)}</div><div class="meta"><span class="due">Due ${esc(dayMd(a.dateDue))}</span></div></div>${score}${tag}</button>`;
     }).join("");
     html += "</div>";
   }
@@ -132,8 +132,8 @@ function renderHomework() {
   for (const day of [...new Set(items.map((it) => it.dueOn))]) {
     const g = items.filter((it) => it.dueOn === day);
     html += `<div class="grouplabel"><span>Due ${esc(relDay(day))}${day === TODAY || day === addDays(TODAY, 1) ? ` · ${esc(dayMd(day))}` : ""}</span><span class="cnt">${g.length}</span></div><div class="card">` + g.map((it) => {
-      const more = it.detail && it.detail.replace(/\s+/g, " ") !== it.title ? it.detail : "", tag = more ? "button" : "div";
-      return `<${tag}${more ? ' type="button" data-hwx' : ""} class="item">${kchip(it.classId)}<div class="txt"><div class="ttl">${esc(it.title)}</div>${more ? `<div class="hw">${esc(more)}</div>` : ""}<div class="meta"><span class="due">Due ${esc(relDay(it.dueOn))}</span><span>· ${esc(cls(it.classId).name)}</span><span>· ${it.source === "assignment" ? "Gradebook" : "Lesson plan"}</span></div></div>${it.points ? `<span class="pts">${it.points} pts</span>` : ""}</${tag}>`;
+      const more = it.detail && it.detail.replace(/\s+/g, " ") !== it.title ? it.detail : "", tag = "button";
+      return `<${tag} type="button"${popAttr({ c: it.classId, t: it.title, d: it.dueOn, x: more })} class="item">${kchip(it.classId)}<div class="txt"><div class="ttl">${esc(it.title)}</div>${more ? `<div class="hw">${esc(more)}</div>` : ""}<div class="meta"><span class="due">Due ${esc(relDay(it.dueOn))}</span><span>· ${esc(cls(it.classId).name)}</span><span>· ${it.source === "assignment" ? "Gradebook" : "Lesson plan"}</span></div></div>${it.points ? `<span class="pts">${it.points} pts</span>` : ""}</${tag}>`;
     }).join("") + "</div>";
   }
   html += '<div class="note">Gradebook assignments plus the homework teachers type in FACTS lesson plans. Tap a line to read the whole entry.</div>';
@@ -150,6 +150,19 @@ function renderAttendance() {
   $("#view").innerHTML = html;
 }
 
+/* ───────────── assignment popup (same as the real Hub: tap a line → "Email <teacher> about this") ───────────── */
+const popAttr = (p) => ` data-pop="${esc(JSON.stringify(p))}"`;
+function openPop(el) {
+  if (!el) return;
+  const old = $("#tpop"); if (old) old.remove();
+  const p = JSON.parse(el.dataset.pop), c = cls(p.c);
+  el.insertAdjacentHTML("afterend", `<div class="tpop" id="tpop"><div class="pop-t">${esc(p.t)}</div>` +
+    `<div class="meta"><span class="due">${p.d < TODAY ? "Was due" : "Due"} ${esc(relDay(p.d))}</span><span>· ${esc(c.name)}</span></div>` +
+    (p.x ? `<div class="hw full">${esc(p.x)}</div>` : "") +
+    `<button type="button" class="btn wide" data-mailx="${esc(c.staffName)}">✉ Email ${esc(c.staffName)} about this</button>` +
+    `<button type="button" class="btn alt wide" data-popclose>Close</button></div>`);
+}
+
 /* ───────────── clicks ───────────── */
 document.addEventListener("click", (e) => {
   const t = e.target;
@@ -159,6 +172,14 @@ document.addEventListener("click", (e) => {
       link: { href: TALON_DEMO, label: "Open the Talon Hub demo ↗" } });
     return;
   }
+  const mx = t.closest("[data-mailx]");
+  if (mx) {
+    explain({ title: "Email your teacher", html: `<p>In your real Student Hub this opens a new email to <b>${esc(mx.dataset.mailx)}</b> with the assignment already in the subject line. Just type your question.</p><p>Nothing is sent in this demo.</p>` });
+    return;
+  }
+  if (t.closest("[data-popclose]")) { const pp = $("#tpop"); if (pp) pp.remove(); return; }
+  const po = t.closest("[data-pop]");
+  if (po) { openPop(po); return; }
   const tb = t.closest("[data-tab]");
   if (tb) { showTab(tb.dataset.tab); return; }
   const og = t.closest("[data-opengrade]");
@@ -194,20 +215,19 @@ const signinSteps = [
   { sel: "#phone-note", title: "On a phone", html: "<p>If Google opens your personal account, choose your <b>school</b> account in the Google window.</p>" },
   { sel: "#signin", title: "Try it", html: "<p>In this demo the button signs you in as a made-up student, <b>Rowan Example</b>, in grade 10.</p>", nextLabel: "Sign in with Google", action: signIn },
 ];
+const tabBtn = (id) => `#tabs [data-tab="${id}"], #topnav [data-tab="${id}"]`;
 const appSteps = [
-  { sel: "", title: "Hi, Rowan", html: `<p>This is the Student Hub with made-up data. The tour points out each part, and you can tap anything as you go.</p>${D.SHIFTED ? '<p class="muted small">It\'s the weekend, so the tour shows Monday as "today".</p>' : ""}`, before: () => showTab("today") },
-  { sel: "#strip", title: "Now and Next", html: "<p>Which class you're in right now and what's next, with times. It updates as the day goes on.</p><p>Tap the \"Hi\" line above it for your homeroom and the quarter dates.</p>" },
-  { sel: "#hw-soon", title: "Homework, next 24 hours", html: "<p>What's due today and tomorrow, from the gradebook and your teachers' lesson plans. Anything a teacher has marked <b>missing or incomplete</b> is listed right below it.</p>" },
-  { sel: "#athletics", title: "Game day", html: "<p>On a team? The game card shows your dismissal time, when the bus leaves, game time, and <b>which classes you'll miss</b>.</p><p class=\"t-try\">Tap the team line or \"Open in Talon Hub\". It opens <b>Talon Hub</b>, the athletics app.</p>" },
-  { sel: "#today-list", title: "Today's classes, in order", html: "<p>Your schedule in bell order, with <b>period, times, room and teacher</b>. <b>NOW</b> and <b>Next</b> are marked.</p>" },
-  { sel: "#tabs, #topnav", title: "The tabs", html: "<p><b>Today · Grades · Homework · Attendance.</b> On a phone they're at the bottom of the screen. On a computer they're at the top.</p>" },
-  { sel: ".gcard", title: "Grades", html: "<p>Each class shows this quarter's average and letter grade, exactly as FACTS has them.</p><p class=\"t-try\">Tap a class to see every assignment.</p>", before: () => { S.openClass = "c-geo"; showTab("grades"); } },
-  { sel: "#hwchips", title: "Homework", html: "<p>Everything due, by day: gradebook assignments plus the homework teachers type into lesson plans. Filter by class, or tap a line to read the full entry.</p>", before: () => showTab("homework") },
-  { sel: "#attstat", title: "Attendance", html: "<p>This quarter's absences, tardies and early dismissals, as recorded in FACTS. A day that isn't listed was a normal day.</p>", before: () => showTab("attendance") },
-  { sel: "", title: "Parent Hub only", html: "<p>The school calendar, lunch orders, and reporting an absence are in the <b>Parent Hub</b>, not the Student Hub. Use \"Switch to Parent\" at the top to see them.</p>" },
-  { sel: ".hdr", title: "On your phone", html: "<ul><li><b>Add it to your home screen</b>: on iPhone, tap Share → \"Add to Home Screen\". On Android, use the ⋮ menu → \"Install app\". It opens like an app.</li><li><b>Dark mode</b> follows your phone's setting.</li><li>You see <b>only your own</b> information.</li></ul>", before: () => { showTab("today"); window.scrollTo(0, 0); } },
-  { sel: ".foot .credit", title: "Built with a student", html: "<p>Thanks to <b>Noah May</b>, an HCS student, who helped design and build the Student Hub prototype.</p>" },
-  { sel: ".tourbar", title: "That's the tour", html: "<p>Keep exploring, or use this bar to see the Parent Hub or start over.</p>", before: () => window.scrollTo(0, 0) },
+  { sel: tabBtn("today"), title: "Today", html: "<p>Your Student Hub opens on <b>Today</b>. Tap it any time to come back here.</p>", before: () => { showTab("today"); window.scrollTo(0, 0); } },
+  { sel: "#strip, #hw-soon, #athletics", all: true, title: "Your day at a glance", html: "<p><b>Today</b> shows the class you're in now, homework due in the next 24 hours, and today's key events, like a game.</p>", before: () => showTab("today") },
+  { sel: tabBtn("grades"), title: "Grades", html: "<p>Next, tap <b>Grades</b>.</p>", before: () => showTab("today") },
+  { sel: "#view .card", all: true, title: "Every class", html: "<p>Your current average and letter grade in every class.</p>", before: () => { S.openClass = null; showTab("grades"); window.scrollTo(0, 0); } },
+  { sel: "#view :has(+ #tpop), #tpop", all: true, title: "Email your teacher", html: "<p>Tap a class to see each assignment. Tap an assignment to <b>email your teacher</b> about it.</p>",
+    before: () => { S.openClass = "c-eng10"; showTab("grades"); openPop(document.querySelector("#view .card.open button.row[data-pop]")); } },
+  { sel: tabBtn("homework"), title: "Homework", html: "<p>Now tap <b>Homework</b>.</p>", before: () => { S.openClass = null; showTab("grades"); } },
+  { sel: "#hwchips, #view .grouplabel.warn, #view .grouplabel.warn + .card", all: true, title: "Everything that's due", html: "<p>Missing work is at the top, then everything due by day. Tap a class to filter.</p>", before: () => { S.hwFilter = "all"; showTab("homework"); window.scrollTo(0, 0); } },
+  { sel: "#view :has(+ #tpop), #tpop", all: true, title: "Read it, or ask about it", html: "<p>Tap any line for your teacher's full note, or to <b>email your teacher</b> about it.</p>",
+    before: () => { showTab("homework"); openPop([...document.querySelectorAll("#view button.item[data-pop]")].find((b) => JSON.parse(b.dataset.pop).x)); } },
+  { sel: "#attstat", title: "Attendance", html: "<p><b>Attendance</b> shows this quarter's absences and tardies. That's the tour. Explore on your own!</p>", before: () => { showTab("attendance"); window.scrollTo(0, 0); } },
 ];
 function appTour() { startTour(appSteps, { onEnd: () => againButton(appTour) }); }
 
